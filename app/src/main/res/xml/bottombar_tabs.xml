@@ -2,17 +2,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <tabs>
         <tab
-            id="@+id/navigation_home"
-            icon="@drawable/ic_home_black_24dp"
-            title="@string/title_home" />
-        <tab
             id="@+id/navigation_dashboard"
             icon="@drawable/ic_dashboard_black_24dp"
             title="@string/title_dashboard" />
         <tab
-            id="@+id/navigation_notifications"
+            id="@+id/navigation_boardgames"
+            icon="@drawable/ic_games_black_24dp"
+            title="Boardgames" />
+        <tab
+            id="@+id/navigation_profile"
             icon="@drawable/ic_notifications_black_24dp"
-            title="@string/title_notifications" />
+            title="Profile" />
     </tabs>
 
 </PreferenceScreen>

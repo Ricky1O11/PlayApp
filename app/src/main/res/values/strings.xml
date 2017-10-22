@@ -2,7 +2,12 @@
     <string name="app_name">Play</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
+    <string name="title_boardgames">Boardgames</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_profile">Profile</string>
+    <string name ="search_label">Search</string>
+    <string name ="logout_label">Logout</string>
+    <string name ="search_hint">Search boardgame</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

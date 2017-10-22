@@ -17,7 +17,6 @@ public class BoardgameMatchesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d("BGTABFRG", "bgmatches!");
         return inflater.inflate(R.layout.fragment_boardgame_matches, container, false);
     }
 }

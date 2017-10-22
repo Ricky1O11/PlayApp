@@ -1,5 +1,6 @@
 package com.games.playapp;
 
+import android.app.SearchManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -16,13 +17,18 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 
+import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +43,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Map;
 
 public class SignedInActivity extends AppCompatActivity implements
-BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardgameDetailFragmentListener{
+BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardgameDetailFragmentListener, ProfileFragment.OnProfileFragmentListener{
 
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static FirebaseAuth mAuth;
@@ -55,9 +61,10 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     private Toolbar myToolbar;
     private TabLayout mTabLayout;
     private CollapsingToolbarLayout collapsingToolbar;
-  //  private FloatingActionButton favouriteFab;
+    private FloatingActionButton favouriteFab;
     private ImageView boardgame_img;
 
+    private String query = "";
 
     public static Map<String, Object> favourites;
     public TabLayout getTabLayout() {
@@ -66,6 +73,10 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     public CollapsingToolbarLayout getCollapsingToolbar() {
         return collapsingToolbar;
     }
+    public FloatingActionButton getFavouriteFab() {
+        return favouriteFab;
+    }
+    public String getQuery() {return query;}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,27 +92,35 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
                 }
 
                 switch (tabId) {
-                    case R.id.navigation_home:
+                    case R.id.navigation_dashboard:
                         launchMatchesFragment();
                         break;
-                    case R.id.navigation_dashboard:
+                    case R.id.navigation_boardgames:
+                        query = "";
                         launchBoardgamesFragment();
                         break;
-                    case R.id.navigation_notifications:
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new ProfileFragment(), "ProfileFragment").commit();
+                    case R.id.navigation_profile:
+                        launchProfileFragment();
                         break;
                 }
             return;
             }
         });
 
+        // Get the intent, verify the action and get the query
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY);
+            launchBoardgamesFragment();
+        }
+
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         setSupportActionBar(myToolbar);
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         appBar = (AppBarLayout) findViewById(R.id.appbar);
-     //   favouriteFab = (FloatingActionButton) findViewById(R.id.fabFav);
+
+        favouriteFab = (FloatingActionButton) findViewById(R.id.fabFav);
         boardgame_img = (ImageView) findViewById(R.id.backdrop);
         main_image_container = (FrameLayout) findViewById(R.id.main_image_container);
         actionBar = getSupportActionBar();
@@ -124,11 +143,8 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w("chrissj2", "Failed to read value.", error.toException());
             }
         });
-
-        launchMatchesFragment();
     }
 
     public static void createIntent(
@@ -186,6 +202,13 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
         ft.commit();
     }
 
+    private void launchProfileFragment() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, ProfileFragment.newInstance(), "ProfileFragment");
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
     @Override
     public void onBackPressed() {
 
@@ -206,6 +229,19 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.search:
+                onSearchRequested();
+                return true;
+            case R.id.logout:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // user is now signed out
+                                startActivity(new Intent(SignedInActivity.this, MainActivity.class));
+                            }
+                        });
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -219,4 +255,13 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
         else
             actionBar.setDisplayHomeAsUpEnabled(true);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.app_bar_menu, menu);
+        return true;
+    }
+
+
 }

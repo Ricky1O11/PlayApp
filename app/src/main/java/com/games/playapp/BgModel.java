@@ -10,25 +10,26 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Map;
 
 import static com.games.playapp.SignedInActivity.favourites;
+import static com.games.playapp.SignedInActivity.getFavourites;
 import static com.games.playapp.SignedInActivity.profileRef;
 
 public class BgModel {
-    private Float mAverage;
+    private Double mAverage;
     private String mName;
     private String mThumbnail;
     private String mImage;
-    private int mBggId;
+    private String mBggId;
 
     public BgModel() {
         // Needed for Firebase
     }
 
-    public BgModel(int bggId, Float average, String name, String thumbnail, String image) {
-        mAverage = average;
-        mName = name;
-        mThumbnail = thumbnail;
-        mBggId = bggId;
-        mImage = image;
+    public BgModel(Map<String, Object> game) {
+        mAverage = (Double) game.get("average");
+        mName = (String) game.get("name");
+        mThumbnail = (String) game.get("thumbnail");
+        mBggId = game.get("bggId").toString();
+        mImage = (String) game.get("image");
     }
 
     public String getName() {
@@ -39,7 +40,7 @@ public class BgModel {
         mName = name;
     }
 
-    public Float getAverage() {
+    public Double getAverage() {
         return mAverage;
     }
 
@@ -51,7 +52,7 @@ public class BgModel {
         return mImage;
     }
 
-    public void setAverage(Float average) {
+    public void setAverage(Double average) {
         mAverage = average;
     }
 
@@ -63,11 +64,24 @@ public class BgModel {
         mThumbnail = thumbnail;
     }
 
-    public int getBggId() {
+    public String getBggId() {
         return mBggId;
     }
 
-    public void setBggId(int bggId) {
+    public void setBggId(String bggId) {
         mBggId = bggId;
+    }
+
+    public void printGame(){
+        Log.d("chrissj2", mName);
+    }
+
+    public Boolean isFavourite(){
+        Map<String, Object> favourites = getFavourites();
+        if(favourites != null) {
+            Map<String, Object> favourited_game = (Map<String, Object>) favourites.get("" + mBggId);
+            return (favourited_game != null);
+        }
+        return false;
     }
 }

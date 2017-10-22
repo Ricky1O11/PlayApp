@@ -30,9 +30,6 @@ import static com.games.playapp.SignedInActivity.database;
 
 public class BoardgameDetailFragment extends Fragment {
     private OnBoardgameDetailFragmentListener mListener;
-    private NestedScrollView mDetailsLayout;
-    private ImageView mFavourite;
-    private LinearLayout mHeader;
     public static DatabaseReference bgDetRef;
     public static Map<String, Object> boardgameInfo = new HashMap<>();
     TabLayout mTabLayout;
@@ -48,10 +45,6 @@ public class BoardgameDetailFragment extends Fragment {
         ((SignedInActivity) getActivity()).getTabLayout().setupWithViewPager(viewPager);
         final BgTabPageAdapter viewPagerAdapter = new BgTabPageAdapter(getFragmentManager(), getContext());
         viewPager.setAdapter(viewPagerAdapter);
-
-        mDetailsLayout = (NestedScrollView) view.findViewById(R.id.sv_details);
-        mHeader = (LinearLayout) view.findViewById(R.id.ll_header);
-        mFavourite = (ImageView) view.findViewById(R.id.iv_favourite);
 
 
         Bundle bundle = this.getArguments();
@@ -70,7 +63,6 @@ public class BoardgameDetailFragment extends Fragment {
         bgDetRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("ricky", ""+dataSnapshot);
                 setBoardgameInfo((Map<String, Object>) dataSnapshot.getValue());
                 viewPagerAdapter.notifyDataSetChanged();
             }

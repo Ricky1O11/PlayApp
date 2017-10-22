@@ -93,7 +93,7 @@ public class BgHolder extends RecyclerView.ViewHolder {
         Picasso.with(mContext).load(thumbnail).into(mThumbnailField);
     }
 
-    public void setAverage(Float average) {
+    public void setAverage(Double average) {
         if(average != null)
             mAverageField.setText(""+average);
         else
