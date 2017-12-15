@@ -32,10 +32,10 @@ public class BasicProfileInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_basic_profile_info, container, false);
-        mMatchPlayed = (TextView) view.findViewById(R.id.tv_match_played);
+        /*mMatchPlayed = (TextView) view.findViewById(R.id.tv_match_played);
         mMatchWon = (TextView) view.findViewById(R.id.tv_match_won);
         mDuration = (TextView) view.findViewById(R.id.tv_duration);
-
+*/
 
         gamesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -81,9 +81,11 @@ public class BasicProfileInfoFragment extends Fragment {
 
                     }
                 }
+                /*
                 mMatchPlayed.setText(""+match_played);
                 mMatchWon.setText(""+match_won);
                 mDuration.setText("250");
+                */
             }
 
             @Override

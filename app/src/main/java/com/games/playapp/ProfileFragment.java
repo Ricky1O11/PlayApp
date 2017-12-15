@@ -37,8 +37,6 @@ import static com.games.playapp.SignedInActivity.user;
 public class ProfileFragment extends Fragment {
     private OnProfileFragmentListener mListener;
 
-    private TextView mMatchPlayed, mMatchWon, mDuration, mUsername, mProfileAvatar;
-    private ImageView mProfileImage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,15 +47,6 @@ public class ProfileFragment extends Fragment {
         ((SignedInActivity) getActivity()).getTabLayout().setupWithViewPager(viewPager);
         final ProfileTabPageAdapter viewPagerAdapter = new ProfileTabPageAdapter(getFragmentManager(), getContext());
         viewPager.setAdapter(viewPagerAdapter);
-/*
-        mUsername= (TextView) view.findViewById(R.id.tv_username);
-        mMatchPlayed = (TextView) view.findViewById(R.id.tv_match_played);
-        mMatchWon = (TextView) view.findViewById(R.id.tv_match_won);
-        mDuration = (TextView) view.findViewById(R.id.tv_duration);
-        mProfileImage = (ImageView) view.findViewById(R.id.iv_profile_img);
-        mProfileAvatar = (TextView) view.findViewById(R.id.tv_profile_avatar);
-*/
-
 
 
         profileRef.addValueEventListener(new ValueEventListener() {
@@ -73,7 +62,7 @@ public class ProfileFragment extends Fragment {
                 Log.w("chrissj2", "Failed to read value.", error.toException());
             }
         });
-        /*
+
         gamesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -118,9 +107,8 @@ public class ProfileFragment extends Fragment {
 
                     }
                 }
-                mMatchPlayed.setText(""+match_played);
-                mMatchWon.setText(""+match_won);
-                mDuration.setText("250");
+                setProfileBasicStats(match_played, match_won, "250");
+
             }
 
             @Override
@@ -129,7 +117,8 @@ public class ProfileFragment extends Fragment {
                 Log.w("chrissj2", "Failed to read value.", error.toException());
             }
 
-        });*/
+        });
+
         return view;
     }
 
@@ -138,13 +127,16 @@ public class ProfileFragment extends Fragment {
         String username = (String) data.get("username");
 
         ((SignedInActivity) getActivity()).getCollapsingToolbar().setTitle(username);
-        ((SignedInActivity) getActivity()).loadImage(image);
         if(!("".equals(image))) {
             ((SignedInActivity) getActivity()).loadImage(image);
         }
         else{
             // ((SignedInActivity) getActivity()).loadImage(image); will need some placeholder
         }
+    }
+
+    private void setProfileBasicStats(int match_played, int match_won, String duration){
+            ((SignedInActivity) getActivity()).loadBasicStats(match_played, match_won, duration);
     }
 
     @Override

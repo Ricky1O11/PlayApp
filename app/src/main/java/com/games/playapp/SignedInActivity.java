@@ -1,6 +1,7 @@
 package com.games.playapp;
 
 import android.app.SearchManager;
+import android.graphics.Typeface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -24,7 +25,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
+import com.elmargomez.typer.Font;
+import com.elmargomez.typer.Typer;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,6 +68,8 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     private FloatingActionButton favouriteFab;
     private ImageView boardgame_img;
 
+    private TextView mMatchPlayed, mMatchWon, mDuration;
+
     private String query = "";
 
     public static Map<String, Object> favourites;
@@ -77,6 +83,8 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
         return favouriteFab;
     }
     public String getQuery() {return query;}
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,12 +126,18 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         setSupportActionBar(myToolbar);
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        Typeface font = Typer.set(this).getFont(Font.ROBOTO_MEDIUM);
+        collapsingToolbar.setExpandedTitleTypeface(font);
         appBar = (AppBarLayout) findViewById(R.id.appbar);
 
         favouriteFab = (FloatingActionButton) findViewById(R.id.fabFav);
         boardgame_img = (ImageView) findViewById(R.id.backdrop);
         main_image_container = (FrameLayout) findViewById(R.id.main_image_container);
         actionBar = getSupportActionBar();
+
+        mMatchPlayed = (TextView) findViewById(R.id.tv_match_played);
+        mMatchWon = (TextView) findViewById(R.id.tv_match_won);
+        mDuration = (TextView) findViewById(R.id.tv_duration);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -171,6 +185,12 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
 
     public void loadImage(String image) {
         Picasso.with(this).load(image).into(boardgame_img);
+    }
+
+    public void loadBasicStats(int match_played, int match_won, String duration) {
+        mMatchPlayed.setText(""+match_played);
+        mMatchWon.setText(""+match_won);
+        mDuration.setText("250");
     }
 
     @Override
