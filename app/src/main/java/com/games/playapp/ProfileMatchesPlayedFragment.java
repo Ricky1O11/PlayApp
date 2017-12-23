@@ -6,18 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MatchesFragment extends Fragment {
-    @Override
+/**
+ * Created by benjy on 18/12/2017.
+ */
+
+public class ProfileMatchesPlayedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_matches, container, false);
-    }
-
-    public static MatchesFragment newInstance() {
-        Bundle args = new Bundle();
-        MatchesFragment fragment = new MatchesFragment();
-        fragment.setArguments(args);
-        return fragment;
+        return inflater.inflate(R.layout.fragment_profile_matches_played, container, false);
     }
 }

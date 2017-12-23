@@ -2,6 +2,7 @@ package com.games.playapp;
 
 import android.app.SearchManager;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -10,22 +11,20 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.elmargomez.typer.Font;
 import com.elmargomez.typer.Typer;
@@ -56,15 +55,17 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     public static DatabaseReference friendsRef;
     public static DataSnapshot favouritesSnap;
     public static FirebaseUser user;
-    private ActionBar actionBar;
+    public static ActionBar actionBar;
 
+    private static final int TIME_DELAY = 2000;
+    private static long back_pressed;
 
     private FrameLayout main_image_container;
     private ImageView iv_boardgame_img;
     private AppBarLayout appBar;
-    private Toolbar myToolbar;
+    public static Toolbar myToolbar;
     private TabLayout mTabLayout;
-    private CollapsingToolbarLayout collapsingToolbar;
+    public static CollapsingToolbarLayout collapsingToolbar;
     private FloatingActionButton favouriteFab;
     private ImageView boardgame_img;
 
@@ -76,7 +77,7 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     public TabLayout getTabLayout() {
         return mTabLayout;
     }
-    public CollapsingToolbarLayout getCollapsingToolbar() {
+    public static CollapsingToolbarLayout getCollapsingToolbar() {
         return collapsingToolbar;
     }
     public FloatingActionButton getFavouriteFab() {
@@ -217,7 +218,7 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
 
     private void launchMatchesFragment() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, MatchesFragment.newInstance(), "MatchesFragment");
+        ft.replace(R.id.fragment_container, HomeFragment.newInstance(), "HomeFragment");
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -231,16 +232,13 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
 
     @Override
     public void onBackPressed() {
-
-        int count = getFragmentManager().getBackStackEntryCount();
-
-        if (count == 0) {
-            super.onBackPressed();
-            //additional code
+        if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+            moveTaskToBack(true);
         } else {
-            getFragmentManager().popBackStack();
+            Toast.makeText(getBaseContext(), "Press once again to exit!",
+                    Toast.LENGTH_SHORT).show();
         }
-
+        back_pressed = System.currentTimeMillis();
     }
 
     @Override
@@ -270,10 +268,8 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
-        if(fragment instanceof MatchesFragment)
             actionBar.setDisplayHomeAsUpEnabled(false);
-        else
-            actionBar.setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override

@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import static com.games.playapp.SignedInActivity.actionBar;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -30,6 +30,7 @@ public class BasicInfoFragment extends Fragment {
         mBoardgameRating = (TextView) view.findViewById(R.id.tv_boardgame_rating);
         mBoardgameYear = (TextView) view.findViewById(R.id.tv_boardgame_year);
         mBoardgameDuration = (TextView) view.findViewById(R.id.tv_boardgame_duration);
+
 
         Bundle bundle = this.getArguments();
         if(bundle != null && bundle.getSerializable("boardgameInfo") != null)
@@ -54,4 +55,8 @@ public class BasicInfoFragment extends Fragment {
         }
         return view;
     }
+
+
+
+
 }

@@ -3,9 +3,11 @@ package com.games.playapp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,6 +31,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import static com.games.playapp.SignedInActivity.database;
+import static com.games.playapp.SignedInActivity.actionBar;
+import static com.games.playapp.SignedInActivity.collapsingToolbar;
+
 import static com.games.playapp.SignedInActivity.favouritesSnap;
 import static com.games.playapp.SignedInActivity.getFavourites;
 import static com.games.playapp.SignedInActivity.user;
@@ -63,7 +68,9 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
 
         mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgames);
         mBoardgamesAdapter = new BoardgamesAdapter(getContext(), this);
-
+        collapsingToolbar.setTitleEnabled(false);
+        actionBar.setTitle("Boardgames");
+        actionBar.setDisplayHomeAsUpEnabled(false);
         query = ((SignedInActivity) getActivity()).getQuery();
 
         Log.d("chrissuper", query);

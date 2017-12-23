@@ -18,10 +18,10 @@ public class ProfileTabPageAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch(position){
-            case 0: return new BasicProfileInfoFragment();
-            case 1: return new BasicProfileInfoFragment();
-            case 2: return new BasicProfileInfoFragment();
-            default: return new BasicProfileInfoFragment();
+            case 0: return new ProfileFavouritesFragment();
+            case 1: return new ProfileStatsFragment();
+            case 2: return new ProfileMatchesPlayedFragment();
+            default: return new ProfileFavouritesFragment();
         }
 
     }

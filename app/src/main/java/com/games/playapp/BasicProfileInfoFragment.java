@@ -49,6 +49,7 @@ public class BasicProfileInfoFragment extends Fragment {
                 int most_played_game_amount = 0;
 
                 Map<String, Object> user_games = (Map<String, Object>) dataSnapshot.getValue();
+                Log.i("Favs", ""+user_games);
 
                 if(user_games != null && user_games.size() > 0){
                     for(Map.Entry<String, Object> game_entry : user_games.entrySet()){
