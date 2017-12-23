@@ -45,6 +45,22 @@ public class BoardgamesAdapter extends RecyclerView.Adapter<BoardgamesAdapter.Bo
             mAverageTextView =(TextView) view.findViewById(R.id.tv_bg_average);
             mFavourite= (ImageView) itemView.findViewById(R.id.iv_bg_favourite);
             view.setOnClickListener(this);
+            mFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BgModel resource = (BgModel) mFavourite.getTag(R.string.id_bg);
+                    boolean isFav = (boolean) mFavourite.getTag(R.string.id_isfav);
+                    Utils.onFavclick(v, resource, isFav);
+                    Log.i("toogle", "favToogle");
+                }
+            });
+
+            mThumbnailField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("img", "mettere l'immagine grande");
+                }
+            });
         }
         @Override
         public void onClick(View v) {
@@ -80,12 +96,15 @@ public class BoardgamesAdapter extends RecyclerView.Adapter<BoardgamesAdapter.Bo
         if(boardgame.isFavourite()){
             boardgamesAdapterViewHolder.mFavourite.setImageResource(R.drawable.ic_favorite);
             boardgamesAdapterViewHolder.mFavourite.setTag(R.string.id_isfav, true);
+
         }
         else{
             boardgamesAdapterViewHolder.mFavourite.setImageResource(R.drawable.ic_favorite_border);
             boardgamesAdapterViewHolder.mFavourite.setTag(R.string.id_isfav, false);
         }
+
         boardgamesAdapterViewHolder.mFavourite.setTag(R.string.id_bg, boardgame);
+
     }
 
     @Override

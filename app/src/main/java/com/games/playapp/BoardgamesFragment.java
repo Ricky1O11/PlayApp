@@ -41,7 +41,7 @@ import static com.games.playapp.SignedInActivity.user;
 public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.BoardgamesAdapterOnClickHandler{
     public static DatabaseReference bgRef;
     public static FirebaseRecyclerAdapter<BgModel, BgHolder> mAdapter;
-    private BoardgamesAdapter mBoardgamesAdapter;
+    public static BoardgamesAdapter mBoardgamesAdapter;
     private SwipeRefreshLayout mRefreshLayout;
     private BoardgamesFragmentListener mListener;
     private ImageView mThumbnailField;
@@ -70,7 +70,6 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
         mBoardgamesAdapter = new BoardgamesAdapter(getContext(), this);
         collapsingToolbar.setTitleEnabled(false);
         actionBar.setTitle("Boardgames");
-        actionBar.setDisplayHomeAsUpEnabled(false);
         query = ((SignedInActivity) getActivity()).getQuery();
 
         Log.d("chrissuper", query);

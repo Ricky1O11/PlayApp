@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -150,6 +151,7 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
         profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("Ciao", "sha");
                 Map<String, Object> user_profile = (Map<String, Object>) dataSnapshot.getValue();
                 DataSnapshot favouritesSnap = dataSnapshot.child("favourites");
                 setFavourites(favouritesSnap);
@@ -175,8 +177,9 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     public static void setFavourites(DataSnapshot fav){
         favouritesSnap = fav;
         favourites = (Map<String,Object>) fav.getValue();
-        if (BoardgamesFragment.mAdapter != null){
-            BoardgamesFragment.mAdapter.notifyDataSetChanged();
+        Log.i("favou", ""+favourites);
+        if (BoardgamesFragment.mBoardgamesAdapter != null){
+            BoardgamesFragment.mBoardgamesAdapter.notifyDataSetChanged();
         }
     }
 
@@ -232,13 +235,23 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
 
     @Override
     public void onBackPressed() {
-        if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
-            moveTaskToBack(true);
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        Log.i("Back", ""+fragment);
+        if (count == 0 || fragment instanceof HomeFragment || fragment instanceof BoardgamesFragment || fragment instanceof ProfileFragment) {
+            Log.i("Back", ""+count);
+            if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+                moveTaskToBack(true);
+            } else {
+                Toast.makeText(getBaseContext(), "Press once again to exit!",
+                        Toast.LENGTH_SHORT).show();
+            }
+            back_pressed = System.currentTimeMillis();
+            //additional code
         } else {
-            Toast.makeText(getBaseContext(), "Press once again to exit!",
-                    Toast.LENGTH_SHORT).show();
+            getSupportFragmentManager().popBackStack();
         }
-        back_pressed = System.currentTimeMillis();
     }
 
     @Override
@@ -268,10 +281,12 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
+        Log.i("Frag", ""+fragment);
+        if(fragment instanceof HomeFragment || fragment instanceof BoardgamesFragment || fragment instanceof ProfileFragment)
             actionBar.setDisplayHomeAsUpEnabled(false);
-
+        else
+            actionBar.setDisplayHomeAsUpEnabled(true);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
