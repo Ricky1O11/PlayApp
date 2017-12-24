@@ -40,11 +40,9 @@ import static com.games.playapp.SignedInActivity.user;
 
 public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.BoardgamesAdapterOnClickHandler{
     public static DatabaseReference bgRef;
-    public static FirebaseRecyclerAdapter<BgModel, BgHolder> mAdapter;
     public static BoardgamesAdapter mBoardgamesAdapter;
     private SwipeRefreshLayout mRefreshLayout;
-    private BoardgamesFragmentListener mListener;
-    private ImageView mThumbnailField;
+
     private BgModel lastBg;
 
     private static final int LIMIT = 20;
@@ -54,7 +52,7 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
     private RecyclerView mRecycler;
     private String query;
     private LinkedList<BgModel> boardgames = new LinkedList();
-
+    private BoardgamesFragmentListener mListener;
 
     private EndlessRecyclerViewScrollListener scrollListener;
 
@@ -166,12 +164,6 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
         return fragment;
     }
 
-
-
-
-
-
-
     private void loadData(String search_field, String orderingField, final Double endAt, final String endAtKey) { // "", average, 1, 18
         bgRef = database.getReference().child("boardgames");
 
@@ -204,7 +196,6 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                     Map<String, Object> game = (Map<String, Object>) childSnapshot.getValue();
                     BgModel boardgame = new BgModel(game);
-                    boardgame.printGame();
                     tempBoardgames.addFirst(boardgame);
 
                 }

@@ -13,120 +13,79 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static com.games.playapp.BoardgameDetailFragment.bgDetRef;
+import static com.games.playapp.SignedInActivity.actionBar;
+import static com.games.playapp.SignedInActivity.collapsingToolbar;
 import static com.games.playapp.SignedInActivity.database;
 import static com.games.playapp.SignedInActivity.favouritesSnap;
 import static com.games.playapp.SignedInActivity.getFavourites;
 
-public class BoardgameExpansionsFragment extends Fragment {
+public class BoardgameExpansionsFragment extends Fragment implements BoardgamesAdapter.BoardgamesAdapterOnClickHandler{
     public static DatabaseReference bgRef;
-    public static FirebaseRecyclerAdapter<BgModel, BgHolder> mAdapter;
-    private LinearLayoutManager mManager;
+    public static BoardgamesAdapter mBoardgamesAdapter;
     private SwipeRefreshLayout mRefreshLayout;
-    private ImageView mThumbnailField;
+    private RecyclerView mRecycler;
+    private String query;
+    private BgModel lastBg;
+
+    private static final int LIMIT = 20;
+    private int currentPage = 0;
+    private Double averageEndsAt= 10.0;
+    private String endsAtKey = "";
+
+
+    private LinkedList<BgModel> boardgames = new LinkedList();
+    private BoardgamesFragment.BoardgamesFragmentListener mListener;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_boardgames, container, false);
 
-        final RecyclerView mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgames);
+        mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgames);
+        mBoardgamesAdapter = new BoardgamesAdapter(getContext(), this);
+        collapsingToolbar.setTitleEnabled(false);
+
+        query = ((SignedInActivity) getActivity()).getQuery();
+
+        mRecycler.setAdapter(mBoardgamesAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        mRecycler.setLayoutManager(linearLayoutManager);
         mRecycler.setHasFixedSize(true);
 
-        mManager = new LinearLayoutManager(getActivity());
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);
-        final Map<String, Object> favourites;
 
 
-        Query query = bgDetRef.child("is_expanded_by").limitToFirst(20);
-        mAdapter = new FirebaseRecyclerAdapter<BgModel, BgHolder>(
-                BgModel.class,
-                R.layout.boardgames_list_item,
-                BgHolder.class,
-                query
-        ) {
+        mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void populateViewHolder(final BgHolder holder, final BgModel bgm, final int position) {
-                Log.d("aaa", "||"+bgm);
-                Map<String, Object> favourites = getFavourites();
-                if(favourites != null) {
-                    Map<String, Object> favourited_game = (Map<String, Object>) favourites.get("" + bgm.getBggId());
-                    holder.bind(bgm, favourited_game);
-                }
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
             }
+        });
 
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
-            public BgHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                BgHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-                viewHolder.setOnClickListener(new BgHolder.ClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position, String name) {
-                        String key = mAdapter.getRef(position).getKey(); //chiave = id bg in firebase
-
-                        BoardgameDetailFragment bgdet= new BoardgameDetailFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("BG_KEY", key);
-                        bgdet.setArguments(bundle);
-
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, bgdet,null)
-                                .addToBackStack(null)
-                                .commit();
-                    }
-
-                    @Override
-                    public void onItemLongClick(View view, int position) {
-                        Toast.makeText(getActivity(), "Item long clicked at " + position, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFavclick(View view, BgModel bgm, boolean isFav) {
-                        if(isFav){
-                            favouritesSnap.getRef().child(""+bgm.getBggId()).removeValue();
-                        }
-                        else{
-                            Map<String, Object> favBg = new HashMap<String, Object>();
-                            favBg.put("image", bgm.getImage());
-                            favBg.put("name", bgm.getName());
-                            favBg.put("key", bgm.getBggId());
-                            favBg.put("bggId", bgm.getBggId());
-                            favBg.put("inserted_at", new Date().getTime());
-                            favouritesSnap.getRef().child(""+bgm.getBggId()).setValue(favBg);
-                        }
-                    }
-                });
-                return viewHolder;
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadMoreData();
             }
         };
 
-        mRecycler.setAdapter(mAdapter);
+        mRecycler.addOnScrollListener(scrollListener);
 
-        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = mAdapter.getItemCount();
-                int lastVisiblePosition =
-                        mManager.findLastCompletelyVisibleItemPosition();
-                // If the recycler view is initially being loaded or the
-                // user is at the bottom of the list, scroll to the bottom
-                // of the list to show the newly added message.
-                if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) &&
-                                lastVisiblePosition == (positionStart - 1))) {
-                    mRecycler.scrollToPosition(positionStart);
-                }
-            }
-        });
+        loadData(query, "average", averageEndsAt, endsAtKey); // load data here for first time launch app
 
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         mRefreshLayout.setOnRefreshListener(
@@ -135,14 +94,86 @@ public class BoardgameExpansionsFragment extends Fragment {
                     public void onRefresh(){
                         Log.i("chris", "onRefresh called from SwipeRefreshLayout");
 
-                        // This method performs the actual data-refresh operation.
-                        // The method calls setRefreshing(false) when it's finished.
-                        mAdapter.notifyDataSetChanged();
+                        boardgames.clear();
+                        averageEndsAt = 10.0;
+                        endsAtKey = "";
+                        loadData(query, "average", averageEndsAt, endsAtKey); // load data here for first time launch app
+                        mBoardgamesAdapter.swapArrayList(boardgames);
                         mRefreshLayout.setRefreshing(false);
                     }
                 }
         );
 
         return view;
+    }
+
+    @Override
+    public void onClick(String id) {
+        BoardgameDetailFragment bgdet= new BoardgameDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("BG_KEY", id);
+        bgdet.setArguments(bundle);
+
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, bgdet,null)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void loadData(String search_field, String orderingField, final Double endAt, final String endAtKey) { // "", average, 1, 18
+
+
+        Query query;
+        if(search_field!=""){
+            String nameEndsAt = search_field.substring(0, search_field.length()-1) +
+                    Utils.changeLetter(search_field.substring(search_field.length()-1, search_field.length()));
+            Log.d("chrissuper2", nameEndsAt);
+            query =bgDetRef.child("is_expanded_by").orderByChild("search_name").startAt(search_field).endAt(nameEndsAt).limitToFirst(LIMIT);
+        }
+        else{
+            if(orderingField == "search_name") {
+                query = bgDetRef.child("is_expanded_by").orderByChild(orderingField).limitToFirst(LIMIT);
+            }
+            else{
+                if(endAtKey == "") {
+                    query = bgDetRef.child("is_expanded_by").orderByChild(orderingField).endAt(endAt).limitToLast(LIMIT);
+                }
+                else {
+                    query = bgDetRef.child("is_expanded_by").orderByChild(orderingField).endAt(endAt, endAtKey).limitToLast(LIMIT);
+                }
+            }
+        }
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                LinkedList<BgModel> tempBoardgames = new LinkedList();
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    Map<String, Object> game = (Map<String, Object>) childSnapshot.getValue();
+                    Log.d("gamename", ""+game);
+                    BgModel boardgame = new BgModel(game);
+                    tempBoardgames.addFirst(boardgame);
+
+                }
+                if(tempBoardgames.size() > 0) {
+                    lastBg = tempBoardgames.getLast();
+                    boardgames.addAll(tempBoardgames);
+                    mBoardgamesAdapter.swapArrayList(boardgames);
+
+                    averageEndsAt = lastBg.getAverage();
+                    endsAtKey = lastBg.getBggId();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void loadMoreData(){
+        if(boardgames.size() >= 20)
+            loadData(query, "average", averageEndsAt, endsAtKey);
     }
 }
