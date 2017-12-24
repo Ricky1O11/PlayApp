@@ -36,7 +36,6 @@ public class BasicInfoFragment extends Fragment {
         if(bundle != null && bundle.getSerializable("boardgameInfo") != null)
             BoardgameDetailFragment.boardgameInfo = (HashMap<String,Object>)bundle.getSerializable("boardgameInfo");
 
-        Log.d("chrissj2", ""+BoardgameDetailFragment.boardgameInfo);
         if(!BoardgameDetailFragment.boardgameInfo.isEmpty()){
             Double average = (Double) BoardgameDetailFragment.boardgameInfo.get("average");
             String yearpublished = (String) BoardgameDetailFragment.boardgameInfo.get("yearpublished");

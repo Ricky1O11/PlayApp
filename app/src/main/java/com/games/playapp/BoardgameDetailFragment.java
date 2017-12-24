@@ -8,20 +8,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.hannesdorfmann.swipeback.Position;
-import com.hannesdorfmann.swipeback.SwipeBack;
-import com.hannesdorfmann.swipeback.transformer.SlideSwipeBackTransformer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +26,6 @@ public class BoardgameDetailFragment extends Fragment {
     private OnBoardgameDetailFragmentListener mListener;
     public static DatabaseReference bgDetRef;
     public static Map<String, Object> boardgameInfo = new HashMap<>();
-    TabLayout mTabLayout;
     String value;
 
     @Override
@@ -40,10 +33,10 @@ public class BoardgameDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_boardgame_detail, container, false);
 
-        final ViewPager viewPager=(ViewPager) view.findViewById(R.id.viewPager);
+        final ViewPager viewPager=(ViewPager) view.findViewById(R.id.viewPagerBoardgame);
 
         ((SignedInActivity) getActivity()).getTabLayout().setupWithViewPager(viewPager);
-        final BgTabPageAdapter viewPagerAdapter = new BgTabPageAdapter(getFragmentManager(), getContext());
+        final BgTabPageAdapter viewPagerAdapter = new BgTabPageAdapter(getActivity().getSupportFragmentManager(), getContext());
         viewPager.setAdapter(viewPagerAdapter);
 
 
@@ -56,7 +49,6 @@ public class BoardgameDetailFragment extends Fragment {
         //SwipeBack.attach(getActivity(), Position.LEFT)
         //        .setContentView(R.layout.fragment_boardgame_detail)
         //        .setSwipeBackView(R.layout.fragment_boardgames);
-
 
         bgDetRef = database.getReference().child("boardgames/" + value);
 

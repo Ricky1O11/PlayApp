@@ -44,9 +44,9 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_profile, container, false);
-        final ViewPager viewPager=(ViewPager) view.findViewById(R.id.viewPager);
+        final ViewPager viewPager=(ViewPager) view.findViewById(R.id.viewPagerProfile);
         ((SignedInActivity) getActivity()).getTabLayout().setupWithViewPager(viewPager);
-        final ProfileTabPageAdapter viewPagerAdapter = new ProfileTabPageAdapter(getFragmentManager(), getContext());
+        final ProfileTabPageAdapter viewPagerAdapter = new ProfileTabPageAdapter(getActivity().getSupportFragmentManager(), getContext());
         viewPager.setAdapter(viewPagerAdapter);
 
 

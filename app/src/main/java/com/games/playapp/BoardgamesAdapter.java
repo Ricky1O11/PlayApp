@@ -51,7 +51,6 @@ public class BoardgamesAdapter extends RecyclerView.Adapter<BoardgamesAdapter.Bo
                     BgModel resource = (BgModel) mFavourite.getTag(R.string.id_bg);
                     boolean isFav = (boolean) mFavourite.getTag(R.string.id_isfav);
                     Utils.onFavclick(v, resource, isFav);
-                    Log.i("toogle", "favToogle");
                 }
             });
 
@@ -91,7 +90,9 @@ public class BoardgamesAdapter extends RecyclerView.Adapter<BoardgamesAdapter.Bo
         final Double average = boardgame.getAverage();
         final String bggId = boardgame.getBggId();
         boardgamesAdapterViewHolder.mTitleTextView.setText(name);
-        boardgamesAdapterViewHolder.mAverageTextView.setText((Math.round(average*100.0)/100.0)+"/10");
+        if(average != null) {
+            boardgamesAdapterViewHolder.mAverageTextView.setText((Math.round(average * 100.0) / 100.0) + "/10");
+        }
 
         if(boardgame.isFavourite()){
             boardgamesAdapterViewHolder.mFavourite.setImageResource(R.drawable.ic_favorite);

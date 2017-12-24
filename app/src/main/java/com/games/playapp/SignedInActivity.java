@@ -47,7 +47,10 @@ import com.squareup.picasso.Picasso;
 import java.util.Map;
 
 public class SignedInActivity extends AppCompatActivity implements
-BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardgameDetailFragmentListener, ProfileFragment.OnProfileFragmentListener{
+        HomeFragment.HomeFragmentListener,
+        BoardgamesFragment.BoardgamesFragmentListener,
+        BoardgameDetailFragment.OnBoardgameDetailFragmentListener,
+        ProfileFragment.OnProfileFragmentListener{
 
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static FirebaseAuth mAuth;
@@ -177,7 +180,6 @@ BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardga
     public static void setFavourites(DataSnapshot fav){
         favouritesSnap = fav;
         favourites = (Map<String,Object>) fav.getValue();
-        Log.i("favou", ""+favourites);
         if (BoardgamesFragment.mBoardgamesAdapter != null){
             BoardgamesFragment.mBoardgamesAdapter.notifyDataSetChanged();
         }

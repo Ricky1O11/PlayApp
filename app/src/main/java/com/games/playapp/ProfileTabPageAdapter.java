@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 
 public class ProfileTabPageAdapter extends FragmentPagerAdapter {
@@ -21,7 +22,7 @@ public class ProfileTabPageAdapter extends FragmentPagerAdapter {
             case 0: return new ProfileFavouritesFragment();
             case 1: return new ProfileStatsFragment();
             case 2: return new ProfileMatchesPlayedFragment();
-            default: return new ProfileFavouritesFragment();
+            default: return new ProfileMatchesPlayedFragment();
         }
 
     }

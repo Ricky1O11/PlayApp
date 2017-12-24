@@ -9,30 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import static com.games.playapp.BoardgameDetailFragment.bgDetRef;
-import static com.games.playapp.SignedInActivity.actionBar;
-import static com.games.playapp.SignedInActivity.collapsingToolbar;
-import static com.games.playapp.SignedInActivity.database;
-import static com.games.playapp.SignedInActivity.favouritesSnap;
-import static com.games.playapp.SignedInActivity.getFavourites;
 
 public class BoardgameExpansionsFragment extends Fragment implements BoardgamesAdapter.BoardgamesAdapterOnClickHandler{
-    public static DatabaseReference bgRef;
     public static BoardgamesAdapter mBoardgamesAdapter;
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecycler;
@@ -40,23 +26,20 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
     private BgModel lastBg;
 
     private static final int LIMIT = 20;
-    private int currentPage = 0;
     private Double averageEndsAt= 10.0;
     private String endsAtKey = "";
 
 
     private LinkedList<BgModel> boardgames = new LinkedList();
-    private BoardgamesFragment.BoardgamesFragmentListener mListener;
     private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_boardgames, container, false);
+        View view =  inflater.inflate(R.layout.fragment_boardgame_expansions, container, false);
 
-        mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgames);
+        mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgame_expansions);
         mBoardgamesAdapter = new BoardgamesAdapter(getContext(), this);
-        collapsingToolbar.setTitleEnabled(false);
 
         query = ((SignedInActivity) getActivity()).getQuery();
 
@@ -85,7 +68,7 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
 
         mRecycler.addOnScrollListener(scrollListener);
 
-        loadData(query, "average", averageEndsAt, endsAtKey); // load data here for first time launch app
+        loadData("", "average", averageEndsAt, endsAtKey, true); // load data here for first time launch app
 
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         mRefreshLayout.setOnRefreshListener(
@@ -97,7 +80,7 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
                         boardgames.clear();
                         averageEndsAt = 10.0;
                         endsAtKey = "";
-                        loadData(query, "average", averageEndsAt, endsAtKey); // load data here for first time launch app
+                        loadData("", "average", averageEndsAt, endsAtKey, false);
                         mBoardgamesAdapter.swapArrayList(boardgames);
                         mRefreshLayout.setRefreshing(false);
                     }
@@ -120,14 +103,23 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
                 .commit();
     }
 
-    private void loadData(String search_field, String orderingField, final Double endAt, final String endAtKey) { // "", average, 1, 18
-
-
+    /*
+    * Loads data from firebase
+    * @search_field: name of the game as typed by the user in the search box
+    * @orderingField: type of ordering: by average or by name
+    * @endAt: value of the last retrieved game
+    * @endAtKey: id of the last retrieved game: used in case of clashing values
+    */
+    private void loadData(String search_field, String orderingField, final Double endAt, final String endAtKey, final boolean override) { // "", average, 1, 18
         Query query;
+        Log.d("datachanged", "IN"+search_field);
+        Log.d("datachanged", "IN"+orderingField);
+        Log.d("datachanged", "IN"+endAt);
+        Log.d("datachanged", "IN"+endAtKey);
+        Log.d("datachanged", "IN"+override);
         if(search_field!=""){
             String nameEndsAt = search_field.substring(0, search_field.length()-1) +
                     Utils.changeLetter(search_field.substring(search_field.length()-1, search_field.length()));
-            Log.d("chrissuper2", nameEndsAt);
             query =bgDetRef.child("is_expanded_by").orderByChild("search_name").startAt(search_field).endAt(nameEndsAt).limitToFirst(LIMIT);
         }
         else{
@@ -150,17 +142,16 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
                 LinkedList<BgModel> tempBoardgames = new LinkedList();
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                     Map<String, Object> game = (Map<String, Object>) childSnapshot.getValue();
-                    Log.d("gamename", ""+game);
-                    BgModel boardgame = new BgModel(game);
+                    BgModel boardgame = new BgModel(game, childSnapshot.getKey());
                     tempBoardgames.addFirst(boardgame);
-
                 }
                 if(tempBoardgames.size() > 0) {
+                    if(override){
+                        boardgames.clear();
+                    }
                     lastBg = tempBoardgames.getLast();
                     boardgames.addAll(tempBoardgames);
                     mBoardgamesAdapter.swapArrayList(boardgames);
-
-                    averageEndsAt = lastBg.getAverage();
                     endsAtKey = lastBg.getBggId();
                 }
             }
@@ -174,6 +165,6 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
 
     private void loadMoreData(){
         if(boardgames.size() >= 20)
-            loadData(query, "average", averageEndsAt, endsAtKey);
+            loadData(query, "average", averageEndsAt, endsAtKey, false);
     }
 }

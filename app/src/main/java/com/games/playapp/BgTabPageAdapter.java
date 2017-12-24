@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import java.util.Map;
 
@@ -36,6 +37,7 @@ public class BgTabPageAdapter extends FragmentPagerAdapter {
     }
 
     public CharSequence getPageTitle(int position){
+
         return tab_titles[position];
     }
 

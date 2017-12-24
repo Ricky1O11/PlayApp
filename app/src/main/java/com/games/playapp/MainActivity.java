@@ -18,7 +18,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements
-        BoardgamesFragment.BoardgamesFragmentListener, BoardgameDetailFragment.OnBoardgameDetailFragmentListener, ProfileFragment.OnProfileFragmentListener{
+        HomeFragment.HomeFragmentListener,
+        BoardgamesFragment.BoardgamesFragmentListener,
+        BoardgameDetailFragment.OnBoardgameDetailFragmentListener,
+        ProfileFragment.OnProfileFragmentListener{
 
     private TextView mTextMessage;
     private FirebaseAuth mAuth;

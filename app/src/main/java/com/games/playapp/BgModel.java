@@ -25,10 +25,14 @@ public class BgModel {
     }
 
     public BgModel(Map<String, Object> game) {
+        this(game, game.get("bggId").toString());
+    }
+
+    public BgModel(Map<String, Object> game, String bggId) {
         mAverage = (Double) game.get("average");
         mName = (String) game.get("name");
         mThumbnail = (String) game.get("thumbnail");
-        mBggId = game.get("bggId").toString();
+        mBggId = bggId;
         mImage = (String) game.get("image");
     }
 

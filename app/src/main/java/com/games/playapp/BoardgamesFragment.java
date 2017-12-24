@@ -3,41 +3,25 @@ package com.games.playapp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static com.games.playapp.SignedInActivity.database;
 import static com.games.playapp.SignedInActivity.actionBar;
-import static com.games.playapp.SignedInActivity.collapsingToolbar;
-
-import static com.games.playapp.SignedInActivity.favouritesSnap;
-import static com.games.playapp.SignedInActivity.getFavourites;
-import static com.games.playapp.SignedInActivity.user;
-
+import static com.games.playapp.SignedInActivity.database;
 public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.BoardgamesAdapterOnClickHandler{
     public static DatabaseReference bgRef;
     public static BoardgamesAdapter mBoardgamesAdapter;
@@ -61,16 +45,13 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_boardgames, container, false);
-
+        actionBar.setTitle("Boardgames");
         ((SignedInActivity) getActivity()).getFavouriteFab().setVisibility(View.GONE);
 
         mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgames);
         mBoardgamesAdapter = new BoardgamesAdapter(getContext(), this);
-        collapsingToolbar.setTitleEnabled(false);
-        actionBar.setTitle("Boardgames");
         query = ((SignedInActivity) getActivity()).getQuery();
-
-        Log.d("chrissuper", query);
+        ((SignedInActivity) getActivity()).getCollapsingToolbar().setTitle("Boardgames");
 
         mRecycler.setAdapter(mBoardgamesAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -167,12 +148,10 @@ public class BoardgamesFragment extends Fragment implements  BoardgamesAdapter.B
     private void loadData(String search_field, String orderingField, final Double endAt, final String endAtKey) { // "", average, 1, 18
         bgRef = database.getReference().child("boardgames");
 
-        Log.d("chrissuper2", search_field);
         Query query;
         if(search_field!=""){
             String nameEndsAt = search_field.substring(0, search_field.length()-1) +
                         Utils.changeLetter(search_field.substring(search_field.length()-1, search_field.length()));
-            Log.d("chrissuper2", nameEndsAt);
             query = bgRef.orderByChild("search_name").startAt(search_field).endAt(nameEndsAt).limitToFirst(LIMIT);
         }
         else{
