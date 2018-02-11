@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements
-        HomeFragment.HomeFragmentListener,
+        MatchesFragment.OnMatchesFragmentListener,
         BoardgamesFragment.BoardgamesFragmentListener,
         BoardgameDetailFragment.OnBoardgameDetailFragmentListener,
         ProfileFragment.OnProfileFragmentListener{

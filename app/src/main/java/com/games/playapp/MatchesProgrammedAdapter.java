@@ -8,13 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.LinkedList;
 
-public class BoardgamesFavouriteAdapter extends RecyclerView.Adapter<BoardgamesFavouriteAdapter.BoardgamesFavouriteAdapterViewHolder> {
+public class MatchesProgrammedAdapter extends RecyclerView.Adapter<MatchesProgrammedAdapter.BoardgamesFavouriteAdapterViewHolder> {
 
     private final BoardgamesFavouriteAdapterOnClickHandler mClickHandler;
     private Context mContext;
@@ -25,7 +24,7 @@ public class BoardgamesFavouriteAdapter extends RecyclerView.Adapter<BoardgamesF
 
     private LinkedList mBoardgames;
 
-    public BoardgamesFavouriteAdapter(@NonNull Context context, BoardgamesFavouriteAdapterOnClickHandler clickHandler) {
+    public MatchesProgrammedAdapter(@NonNull Context context, BoardgamesFavouriteAdapterOnClickHandler clickHandler) {
         mContext = context;
         mClickHandler = clickHandler;
     }

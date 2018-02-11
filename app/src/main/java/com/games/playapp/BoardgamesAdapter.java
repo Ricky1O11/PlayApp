@@ -1,5 +1,6 @@
 package com.games.playapp;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,6 @@ public class BoardgamesAdapter extends RecyclerView.Adapter<BoardgamesAdapter.Bo
 
     private final BoardgamesAdapterOnClickHandler mClickHandler;
     private Context mContext;
-
     public interface BoardgamesAdapterOnClickHandler {
         void onClick(String id);
     }

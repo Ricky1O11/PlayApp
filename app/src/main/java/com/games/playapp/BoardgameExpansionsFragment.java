@@ -48,8 +48,6 @@ public class BoardgameExpansionsFragment extends Fragment implements BoardgamesA
         mRecycler.setLayoutManager(linearLayoutManager);
         mRecycler.setHasFixedSize(true);
 
-
-
         mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

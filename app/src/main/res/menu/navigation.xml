@@ -12,6 +12,11 @@
         android:title="@string/title_boardgames" />
 
     <item
+        android:id="@+id/navigation_matches"
+        android:icon="@drawable/ic_matches_black_24dp"
+        android:title="@string/title_matches" />
+
+    <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/title_profile" />

@@ -50,7 +50,8 @@ public class SignedInActivity extends AppCompatActivity implements
         HomeFragment.HomeFragmentListener,
         BoardgamesFragment.BoardgamesFragmentListener,
         BoardgameDetailFragment.OnBoardgameDetailFragmentListener,
-        ProfileFragment.OnProfileFragmentListener{
+        ProfileFragment.OnProfileFragmentListener,
+        MatchesFragment.OnMatchesFragmentListener{
 
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static FirebaseAuth mAuth;
@@ -106,7 +107,7 @@ public class SignedInActivity extends AppCompatActivity implements
 
                 switch (tabId) {
                     case R.id.navigation_dashboard:
-                        launchMatchesFragment();
+                        launchHomeFragment();
                         break;
                     case R.id.navigation_boardgames:
                         query = "";
@@ -114,6 +115,9 @@ public class SignedInActivity extends AppCompatActivity implements
                         break;
                     case R.id.navigation_profile:
                         launchProfileFragment();
+                        break;
+                    case R.id.navigation_matches:
+                        launchMatchesFragment();
                         break;
                 }
             return;
@@ -214,6 +218,13 @@ public class SignedInActivity extends AppCompatActivity implements
         collapsingToolbar.setTitleEnabled(false);
     }
 
+    private void launchHomeFragment() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, HomeFragment.newInstance(), "HomeFragment");
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
     private void launchBoardgamesFragment() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, BoardgamesFragment.newInstance(), "BoardgamesFragment");
@@ -223,7 +234,7 @@ public class SignedInActivity extends AppCompatActivity implements
 
     private void launchMatchesFragment() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, HomeFragment.newInstance(), "HomeFragment");
+        ft.replace(R.id.fragment_container, MatchesFragment.newInstance(), "MatchesFragment");
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -241,7 +252,7 @@ public class SignedInActivity extends AppCompatActivity implements
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
         Log.i("Back", ""+fragment);
-        if (count == 0 || fragment instanceof HomeFragment || fragment instanceof BoardgamesFragment || fragment instanceof ProfileFragment) {
+        if (count == 0 || fragment instanceof HomeFragment || fragment instanceof MatchesFragment || fragment instanceof BoardgamesFragment || fragment instanceof ProfileFragment) {
             Log.i("Back", ""+count);
             if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
                 moveTaskToBack(true);
@@ -284,7 +295,7 @@ public class SignedInActivity extends AppCompatActivity implements
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
         Log.i("Frag", ""+fragment);
-        if(fragment instanceof HomeFragment || fragment instanceof BoardgamesFragment || fragment instanceof ProfileFragment)
+        if(fragment instanceof HomeFragment || fragment instanceof BoardgamesFragment || fragment instanceof ProfileFragment || fragment instanceof MatchesFragment)
             actionBar.setDisplayHomeAsUpEnabled(false);
         else
             actionBar.setDisplayHomeAsUpEnabled(true);

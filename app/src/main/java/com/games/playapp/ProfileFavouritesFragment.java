@@ -12,8 +12,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
-public class ProfileFavouritesFragment extends Fragment implements BoardgamesFavouriteAdapter.BoardgamesFavouriteAdapterOnClickHandler{
-    public static BoardgamesFavouriteAdapter mBoardgamesAdapter;
+public class ProfileFavouritesFragment extends Fragment implements ProfileFavouriteAdapter.BoardgamesFavouriteAdapterOnClickHandler{
+    public static ProfileFavouriteAdapter mBoardgamesAdapter;
     private RecyclerView mRecycler;
 
 
@@ -25,7 +25,7 @@ public class ProfileFavouritesFragment extends Fragment implements BoardgamesFav
         View view =  inflater.inflate(R.layout.fragment_profile_favourites, container, false);
 
         mRecycler = (RecyclerView) view.findViewById(R.id.recyclerview_boardgame_favourites);
-        mBoardgamesAdapter = new BoardgamesFavouriteAdapter(getContext(), this);
+        mBoardgamesAdapter = new ProfileFavouriteAdapter(getContext(), this);
 
         mRecycler.setAdapter(mBoardgamesAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
@@ -33,9 +33,14 @@ public class ProfileFavouritesFragment extends Fragment implements BoardgamesFav
         mRecycler.setHasFixedSize(true);
 
         boardgames.clear();
-        for (Map.Entry<String, Object> game : SignedInActivity.favourites.entrySet()) {
-            BgModel boardgame = new BgModel((Map) game.getValue());
-            boardgames.addFirst(boardgame);
+        if(SignedInActivity.favourites!=null){
+            for (Map.Entry<String, Object> game : SignedInActivity.favourites.entrySet()) {
+                BgModel boardgame = new BgModel((Map) game.getValue());
+                boardgames.addFirst(boardgame);
+            }
+        }
+        else{
+            Log.i("null", "ciao");
         }
         mBoardgamesAdapter.swapArrayList(boardgames);
 
